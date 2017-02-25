@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.trp</groupId>
+  <artifactId>word-count-app</artifactId>
+  <version>1.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>word-count-app</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <addClasspath>true</addClasspath>
+                        <classpathPrefix>lib/</classpathPrefix>
+                        <mainClass>org.trp.awsappdev.WordCountMessageConsumer</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.amazonaws</groupId>
+    	<artifactId>aws-java-sdk-core</artifactId>
+    	<version>1.11.73</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.amazonaws</groupId>
+    	<artifactId>aws-java-sdk-lambda</artifactId>
+    	<version>1.11.22</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.amazonaws</groupId>
+    	<artifactId>aws-java-sdk-dynamodb</artifactId>
+    	<version>1.11.73</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.amazonaws</groupId>
+    	<artifactId>aws-java-sdk-sqs</artifactId>
+    	<version>1.11.22</version>
+    </dependency>
+  </dependencies>
+</project>
