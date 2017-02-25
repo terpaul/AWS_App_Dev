@@ -1,4 +1,4 @@
-package org.trp.awsappdev.consumer;
+package org.trp.awsappdev;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,12 +23,15 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.regions.Region;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.applicationdiscovery.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.GetItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
@@ -43,7 +46,10 @@ import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.amazonaws.services.sqs.model.SendMessageResult;
 
 public class WordCountMessageConsumer {
     private static final String QUEUE_NAME = "WordCountJobs";
@@ -82,7 +88,7 @@ public class WordCountMessageConsumer {
      * Run the consumer.
      */
     private void run() {
-        AmazonSQS sqs = new AmazonSQSClient();//FUCK AWS .withRegion(Region.getRegion(Regions.US_WEST_2));
+        AmazonSQS sqs = new AmazonSQSClient().withRegion(Regions.US_WEST_2);
 
         try {
             int totalMessages = 0;
@@ -277,7 +283,6 @@ public class WordCountMessageConsumer {
      * Log message details for troubleshooting.
      * @param message Message to be logged.
      */
-    @SuppressWarnings("unused")
     private void logMessage(Message message) {
         System.out.println("  Message Contents");
         System.out.println("    MessageId:     " + message.getMessageId());
