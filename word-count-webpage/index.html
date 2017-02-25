@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Word Counter w/Dynamo DB</title>
+    <script type="text/javascript">
+		function getTopWords() {
+		  document.getElementById("output").innerHTML = "Counting words...";
+		  var xhttp = new XMLHttpRequest();
+		  xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+			 var url = document.getElementById('url').value;
+			 var results;
+			 if (url !== null && url !== '') {
+			   document.getElementById('content').value = '';
+			   results = "URL: " + url + "<p>";
+			 } else {
+			   results = "";
+			 }
+			 document.getElementById("output").innerHTML = results + this.responseText;
+			 if (this.responseText.indexOf("<table") > -1) {
+			    document.getElementById('url').value = '';
+			 }
+			}
+		  };
+		  //xhttp.open("POST", "http://54.218.47.167:3000/findTopWords", true);
+		  xhttp.open("POST", "http://52.33.100.175:3000/findTopWords", true);
+
+		  var content = document.getElementById('content').value;
+		  var url = document.getElementById('url').value;
+
+		  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		  xhttp.send("content="+ encodeURIComponent(content)+'&url='+encodeURIComponent(url));
+		}
+    </script>
+  </head>
+  <body>
+    <div>Please fill one of the fields</div>
+    <table>
+      <tr><td>URL:</td><td><input id="url" size="100"></input></td></tr>
+      <tr>
+        <td>Content:</td>
+        <td><textarea id="content" rows="20" cols="100"></textarea></td>
+      </tr>
+      <tr colspan="2">
+        <td><button type="button" onclick="getTopWords()">Get Top Words</button></td>
+      </tr>
+    </table>
+    <p/>
+    <div id="output"></div>
+  </body>
+</html>
+
