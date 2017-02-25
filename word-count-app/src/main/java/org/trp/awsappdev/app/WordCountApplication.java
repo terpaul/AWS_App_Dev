@@ -82,7 +82,7 @@ public class WordCountApplication {
      * Run the application.
      */
     private void run() {
-        AmazonSQS sqs = new AmazonSQSClient();//FUCK AWS .withRegion(Region.getRegion(Regions.US_WEST_2));
+        AmazonSQS sqs = new AmazonSQSClient().withRegion(Region.getRegion(Regions.US_WEST_2));
 
         try {
             int totalMessages = 0;
