@@ -38,7 +38,6 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
 import com.amazonaws.services.sqs.model.GetQueueUrlResult;
@@ -82,7 +81,7 @@ public class WordCountMessageConsumer {
      * Run the consumer.
      */
     private void run() {
-        AmazonSQS sqs = new AmazonSQSClient().withRegion(Regions.US_WEST_2);
+        AmazonSQSClient sqs = new AmazonSQSClient().withRegion(Region.getRegion(Regions.US_WEST_2));
 
         try {
             int totalMessages = 0;
