@@ -29,7 +29,7 @@
 		  var url = document.getElementById('url').value;
 
 		  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		  xhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+		  xhttp.setRequestHeader("Access-Control-Allow-Origin", "http://trpaul-find-top-words.s3-website-us-west-2.amazonaws.com");
 		  xhttp.send("content="+ encodeURIComponent(content)+'&url='+encodeURIComponent(url));
 		}
     </script>
