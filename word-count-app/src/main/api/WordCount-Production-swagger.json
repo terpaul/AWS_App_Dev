@@ -1,0 +1,35 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2017-02-26T02:04:03Z",
+    "title": "WordCount"
+  },
+  "host": "i8pvvi40ai.execute-api.us-west-2.amazonaws.com",
+  "basePath": "/Production",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/": {
+      "post": {
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/Empty"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Empty": {
+      "type": "object",
+      "title": "Empty Schema"
+    }
+  }
+}
