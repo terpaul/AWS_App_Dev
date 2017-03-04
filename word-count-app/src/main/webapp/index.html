@@ -22,14 +22,15 @@
 			 }
 			}
 		  };
+          var content = document.getElementById('content').value;
+          var url = document.getElementById('url').value;
+          var encodedUrl = encodeURIComponent(url);
 		  //xhttp.open("POST", "http://52.33.100.175:3000/findTopWords", true);
-		  xhttp.open("POST", "https://i8pvvi40ai.execute-api.us-west-2.amazonaws.com/Production", true);
+		  //xhttp.open("POST", "https://i8pvvi40ai.execute-api.us-west-2.amazonaws.com/Production/wordcount", true);
+          xhttp.open("GET", "https://i8pvvi40ai.execute-api.us-west-2.amazonaws.com/node/wordcount?url=" + encodedUrl, true);
 
-		  var content = document.getElementById('content').value;
-		  var url = document.getElementById('url').value;
 
 		  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		  xhttp.setRequestHeader("Access-Control-Allow-Origin", "http://trpaul-find-top-words.s3-website-us-west-2.amazonaws.com");
 		  xhttp.send("content="+ encodeURIComponent(content)+'&url='+encodeURIComponent(url));
 		}
     </script>
