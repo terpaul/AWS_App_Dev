@@ -65,16 +65,20 @@ public class WordCountMessageConsumer implements RequestHandler<Object, String> 
         try {
             int totalMessages = 0;
             String queue = null;
+            // Get the queue
             GetQueueUrlRequest getQueueRequest = new GetQueueUrlRequest(QUEUE_NAME);
             GetQueueUrlResult getQueueResult = sqs.getQueueUrl(getQueueRequest);
             if ((getQueueResult != null) && (getQueueResult.getQueueUrl() != null)) {
                 queue = getQueueResult.getQueueUrl();
 
-                ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queue);
-                receiveMessageRequest.setWaitTimeSeconds(Integer.valueOf(2));
+                // Read the messages from the queue
+                ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queue)
+                    .withWaitTimeSeconds(Integer.valueOf(2))
+                    .withAttributeNames(new String[] { "All" });
                 List<Message> messages = sqs
-                    .receiveMessage(receiveMessageRequest.withAttributeNames(new String[] { "All" })).getMessages();
+                    .receiveMessage(receiveMessageRequest).getMessages();
                 logger.log("Received " + messages.size() + " messages");
+                // Process each message
                 for (Message message : messages) {
                     totalMessages++;
                     try {
@@ -83,9 +87,11 @@ public class WordCountMessageConsumer implements RequestHandler<Object, String> 
                         URL url = new URL(message.getBody());
                         String snippet = null;
 
-                        AmazonDynamoDBClient dynamoDBClient = (AmazonDynamoDBClient) new AmazonDynamoDBClient()
-                        .withRegion(Regions.US_WEST_2);
+                        AmazonDynamoDBClient dynamoDBClient = 
+                            (AmazonDynamoDBClient) new AmazonDynamoDBClient().withRegion(Regions.US_WEST_2);
+                        DynamoDB client = new DynamoDB(dynamoDBClient);
 
+                        // Make sure the table exists
                         CreateTableRequest createTableRequest = 
                             new CreateTableRequest().withTableName(DB_TABLE_NAME)
                         .withKeySchema(new KeySchemaElement[] { new KeySchemaElement(DB_URL_COLUMN, KeyType.HASH),
@@ -98,15 +104,15 @@ public class WordCountMessageConsumer implements RequestHandler<Object, String> 
                         
                         TableUtils.createTableIfNotExists(dynamoDBClient, createTableRequest);
 
-                        DynamoDB client = new DynamoDB(dynamoDBClient);
-
                         Table table = client.getTable(DB_TABLE_NAME);
 
                         logger.log("Table " + table.getTableName() + " contains " + table.describe().getItemCount()
                                    + " items.");
                         if (table.describe().getItemCount().longValue() > 0L) {
+                            // See if the URL is already in the DB
                             GetItemOutcome gio = table.getItemOutcome(DB_URL_COLUMN, url.toString());
-                            if ((gio != null) && (gio.getGetItemResult() != null)
+                            if ((gio != null) 
+                                && (gio.getGetItemResult() != null) 
                                 && (gio.getGetItemResult().getItem() != null)) {
                                 snippet = ((AttributeValue) gio.getGetItemResult().getItem().get(DB_SNIPPET_COLUMN)).getS();
                             }
@@ -119,12 +125,7 @@ public class WordCountMessageConsumer implements RequestHandler<Object, String> 
 
                         snippet = countWordsOnPage(url);
 
-                        logger.log("Saving snippet in DB...");
-                        logger.log("URL: " + url + "\nSnippet: " + snippet);
-
-                        HashMap<String, AttributeValue> key = new HashMap();
-                        key.put(DB_URL_COLUMN, new AttributeValue().withS(url.toString()));
-                        key.put(DB_SNIPPET_COLUMN, new AttributeValue().withS(snippet));
+                        logger.log("Saving snippet in DB for URL: " + url + "\nSnippet: " + snippet);
 
                         Item item = new Item().withPrimaryKey(DB_URL_COLUMN, url.toString())
                                     .withString(DB_SNIPPET_COLUMN, snippet);
@@ -150,7 +151,7 @@ public class WordCountMessageConsumer implements RequestHandler<Object, String> 
             }
         }
         catch (AmazonClientException ase) {
-            ase.printStackTrace();
+            logger.log(ase.toString());
         }
         return "done";
     }
