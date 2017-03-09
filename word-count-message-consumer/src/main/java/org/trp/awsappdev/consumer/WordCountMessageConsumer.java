@@ -55,7 +55,7 @@ public class WordCountMessageConsumer {
     private long sleepTime = 1000;
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Final version for Homework #4.");
+        System.out.println("Final version for Homework #5.");
         WordCountMessageConsumer consumer = new WordCountMessageConsumer();
         consumer.run();
     }

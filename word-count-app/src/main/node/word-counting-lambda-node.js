@@ -47,19 +47,21 @@ function getFromDynamo(url, callback) {
 
 exports.handler = (data, context, callback) => {
     console.log('Received event:', JSON.stringify(data, null, 2));
-    
+    if (data.url.includes("google")) {
+        console.log("[UNEXPECTED_INPUT] cannot process google");
+        callback(null, "ERROR: Cannot process google");
+        return;
+    }
     var snippet = getFromDynamo(data.url, function(snippet) {
     console.log("Received '" + snippet + "' from DB for URL " + data.url);
     if (snippet !== null && typeof snippet != 'undefined') {
         console.log("Fetched '" + snippet + "' from DB for URL " + data.url);
         callback(null, snippet);
-        //console.log("After the callback.");
         return;
     } else {
         console.log("No data in DB for URL " + data.url);
         // Send SQS message
         console.log("Sending SQS message...");
-        var AWS = require("aws-sdk");
         var sqs = new AWS.SQS();
 
         var params = {
